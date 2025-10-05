@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppRegistry, View, StyleSheet, Animated, StatusBar } from 'react-native';
 import App from './client/App';
 import { name as appName } from './app.json';
+import { enableScreens } from 'react-native-screens';
+enableScreens(true);
 
 const Root = () => {
   const [loading, setLoading] = useState(true);
