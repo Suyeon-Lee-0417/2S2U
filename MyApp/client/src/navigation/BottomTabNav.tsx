@@ -2,11 +2,25 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
+import { Image, View } from 'react-native';
 import AlphabetScreen from '../screens/AlphabetScreen';
 import WordsScreen from '../screens/WordsScreen';
-import { Image } from 'react-native';
 
 const Tab = createBottomTabNavigator();
+
+const ICON_CONTAINER = {
+  width: 120,
+  height: 45,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const ICON_STYLE = (focused: boolean) => ({
+  width: 110,
+  height: 40,
+  resizeMode: 'contain' as const,
+  opacity: focused ? 1 : 0.6,
+});
 
 const BottomTabNav = () => {
   return (
@@ -22,43 +36,39 @@ const BottomTabNav = () => {
           },
         }}
       >
-        {/* 🅰️ Alphabet Page */}
+
+        {/* 🅰️ Alphabets */}
         <Tab.Screen
           name="Alphabet"
           component={AlphabetScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <Image
-                source={require('../../assets/images/button_alphabets.png')}
-                style={{
-                  width: 120,
-                  height: 45,
-                  resizeMode: 'contain',
-                  opacity: focused ? 1 : 0.6, // 비활성일 때 살짝 흐리게
-                }}
-              />
+              <View style={ICON_CONTAINER}>
+                <Image
+                  source={require('../../assets/images/button_alphabets.png')}
+                  style={ICON_STYLE(focused)}
+                />
+              </View>
             ),
           }}
         />
 
-        {/* 📖 Words Page */}
+        {/* 📖 Words */}
         <Tab.Screen
           name="Words"
           component={WordsScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <Image
-                source={require('../../assets/images/button_words.png')}
-                style={{
-                  width: 120,
-                  height: 45,
-                  resizeMode: 'contain',
-                  opacity: focused ? 1 : 0.6,
-                }}
-              />
+              <View style={ICON_CONTAINER}>
+                <Image
+                  source={require('../../assets/images/button_words.png')}
+                  style={ICON_STYLE(focused)}
+                />
+              </View>
             ),
           }}
         />
+
       </Tab.Navigator>
     </NavigationContainer>
   );
