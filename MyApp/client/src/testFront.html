@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flask API Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 40px;
+      background-color: #fafafa;
+    }
+    button {
+      padding: 10px 16px;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    pre {
+      background-color: #222;
+      color: #0f0;
+      padding: 12px;
+      border-radius: 5px;
+      overflow-x: auto;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Test Frontend — Activities API</h1>
+  <p>This page tests <code>/api/activities/search</code> on your Flask server.</p>
+
+  <button id="testBtn">Send POST request</button>
+
+  <h3>Response:</h3>
+  <pre id="output">Click the button to test...</pre>
+
+  <script>
+    const API_URL = "http://127.0.0.1:4000/api/activities/search";
+
+    document.getElementById("testBtn").addEventListener("click", async () => {
+      document.getElementById("output").textContent = "⏳ Sending request...";
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+
+        const data = await res.json();
+        console.log("Response:", data);
+        document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        console.error(err);
+        document.getElementById("output").textContent = "❌ Error: " + err;
+      }
+    });
+  </script>
+</body>
+</html>
