@@ -1,6 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import TrackPlayer, { Capability } from 'react-native-track-player';
 import styles from '../styles/AlphabetScreen.styles';
+
+export async function setupPlayer() {
+  await TrackPlayer.setupPlayer();
+  TrackPlayer.updateOptions({
+    capabilities: [Capability.Play, Capability.Pause],
+  });
+}
+
+export async function playSound(file: any) {
+  await TrackPlayer.reset();
+  await TrackPlayer.add({
+    id: 'sound',
+    url: file, // 예: require('../../assets/sounds/a.mp3')
+    title: 'Cree Sound',
+  });
+  await TrackPlayer.play();
+}
 
 export default function AlphabetScreen() {
   const columns = ['ē','i','o','a','ā','ī','ō','final'];
@@ -25,13 +43,48 @@ export default function AlphabetScreen() {
   const [selected, setSelected] = useState<string | null>(null);
   const [pron, setPron] = useState<string>('');
 
-  const say: Record<string,string> = {
-    // 필요하면 여기에 발음 매핑을 채워 넣으세요.
+  const soundMap: Record<string, any> = {
+    'ᐊ': require('../assets/sound/a.mp3'),
+    'ᐋ': require('../assets/sound/aa.mp3'),
+    'ᐁ': require('../assets/sound/e.mp3'),
+    'ᐃ': require('../assets/sound/i.mp3'),
+    'ᐄ': require('../assets/sound/ii.mp3'),
+    'ᐅ': require('../assets/sound/u.mp3'),
+    'ᐆ': require('../assets/sound/uu.mp3'),
+    'ᐘ': require('../assets/sound/wa.mp3'),
+    'ᐚ': require('../assets/sound/waa.mp3'),
+    'ᐍ': require('../assets/sound/we.mp3'),
+    'ᐏ': require('../assets/sound/wi.mp3'),
+    'ᐑ': require('../assets/sound/wii.mp3'),
+    'ᐓ': require('../assets/sound/wu.mp3'),
+    'ᐕ': require('../assets/sound/wuu.mp3'),
+  };
+  
+  const pronunciationMap: Record<string, string> = {
+    'ᐊ': '[a]',
+    'ᐋ': '[aa]', 
+    'ᐁ': '[e]',
+    'ᐃ': '[i]',
+    'ᐄ': '[ii]',
+    'ᐅ': '[u]',
+    'ᐆ': '[uu]',
+    'ᐘ': '[wa]',
+    'ᐚ': '[waa]',
+    'ᐍ': '[we]',
+    'ᐏ': '[wi]',
+    'ᐑ': '[wii]',
+    'ᐓ': '[wu]',
+    'ᐕ': '[wuu]',
   };
 
-  const onPick = (sym: string) => {
+
+  const onPick = async (sym: string) => {
     setSelected(sym);
-    setPron(say[sym] ?? '');
+    setPron(pronunciationMap[sym] ?? '');
+    const soundFile = soundMap[sym];
+    if (soundFile) {
+      await playSound(soundFile);
+    }
   };
 
   return (
