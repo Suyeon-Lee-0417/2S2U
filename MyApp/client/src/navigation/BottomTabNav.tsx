@@ -2,32 +2,29 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Text, View } from 'react-native';
+import { View, Image, StyleSheet, ImageSourcePropType } from 'react-native';
 import AlphabetScreen from '../screens/AlphabetScreen';
 import WordsScreen from '../screens/WordsScreen';
 import DonationScreen from '../screens/DonationScreen';
-import RecordScreen from '../screens/RecordScreen';
 
 const Tab = createBottomTabNavigator();
 
-const TAB_TEXT_STYLE = (focused: boolean, highlight?: boolean) => ({
-  fontSize:10,
-  fontWeight: focused ? '700' : '500',
-  color: highlight
-    ? focused
-      ? '#1a2e05'
-      : '#666'
-    : focused
-    ? '#1e90ff'
-    : '#666',
-  letterSpacing: 0.5,
-});
+// ✅ 공통 아이콘 뷰 (선택되면 초록 배경)
+const TabIcon = ({ source, focused }: {source: ImageSourcePropType; focused: boolean}) => (
+  <View style={[styles.iconContainer, focused && styles.focusedBackground]}>
+    <Image
+      source={source}
+      style={[styles.icon, { opacity: focused ? 1 : 0.6 }]}
+      resizeMode="contain"
+    />
+  </View>
+);
 
 const BottomTabNav = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
@@ -38,71 +35,47 @@ const BottomTabNav = () => {
             justifyContent: 'space-around',
             alignItems: 'center',
           },
-        }}
+          // ✅ 라우트별 아이콘 매핑 + 공통 TabIcon 사용
+          tabBarIcon: ({ focused }) => {
+            let src: ImageSourcePropType;
+            switch (route.name) {
+              case 'Alphabet':
+                src = require('../../assets/images/navAlphabet.png');
+                break;
+              case 'Words':
+                src = require('../../assets/images/navWords.png');
+                break;
+              case 'Donation':
+              default:
+                src = require('../../assets/images/navDonation.png');
+            }
+            return <TabIcon source={src} focused={focused} />;
+          },
+        })}
       >
-        {/* 🅰️ Alphabet */}
-        <Tab.Screen
-          name="Alphabet"
-          component={AlphabetScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={TAB_TEXT_STYLE(focused)}>A</Text>
-              </View>
-            ),
-          }}
-        />
-
-        {/* 📖 Words */}
-        <Tab.Screen
-          name="Words"
-          component={WordsScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={TAB_TEXT_STYLE(focused)}>W</Text>
-              </View>
-            ),
-          }}
-        />
-
-        {/* 🎙️ Record */}
-        <Tab.Screen
-          name="Record"
-          component={RecordScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={TAB_TEXT_STYLE(focused)}>R</Text>
-              </View>
-            ),
-          }}
-        />
-
-        {/* 💚 Donate */}
-        <Tab.Screen
-          name="Donation"
-          component={DonationScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: focused ? '#a7d58e' : 'transparent',
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 18,
-                }}
-              >
-                <Text style={TAB_TEXT_STYLE(focused, true)}>D</Text>
-              </View>
-            ),
-          }}
-        />
+        <Tab.Screen name="Alphabet" component={AlphabetScreen} />
+        <Tab.Screen name="Words" component={WordsScreen} />
+        <Tab.Screen name="Donation" component={DonationScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 18,
+  },
+  icon: {
+    width: 28,
+    height: 28,
+  },
+  focusedBackground: {
+    backgroundColor: '#a7d58e',
+  },
+});
 
 export default BottomTabNav;
