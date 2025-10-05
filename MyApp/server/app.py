@@ -37,6 +37,15 @@ def assess_json():
             src = os.path.join(td, file.filename or "in.m4a")
             file.save(src)
             # 수호 TODO audio convert
+            wav_path = os.path.join(td, "converted.wav")
+            cmd = [
+                "ffmpeg", "-y", "-i", src,
+                "-ac", "1",          # mono
+                "-ar", "16000",      # 16 kHz sample rate
+                "-c:a", "pcm_s16le", # PCM 16-bit
+                wav_path
+            ]
+            subprocess.run(cmd, check=True)
 
         key = os.environ.get("AZURE_SPEECH_KEY")
         region = os.environ.get("AZURE_SPEECH_REGION")
@@ -46,7 +55,8 @@ def assess_json():
 
         speech_config = speechsdk.SpeechConfig(subscription=key, region=region)
         speech_config.speech_recognition_language = lang
-        audio_config = speechsdk.audio.AudioConfig()  # 수호 todo
+        audio_config = speechsdk.audio.AudioConfig(filename=wav_path)
+        recognizer = speechsdk.SpeechRecognizer(speech_config, audio_config)  # 수호 todo
 
         body = request.get_json(force=True) or {}
         # ✅ 필수값 검사 (예: text)
