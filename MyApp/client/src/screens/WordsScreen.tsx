@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import TrackPlayer, { Capability } from "react-native-track-player";
 
 type Word = {
   Cree: string;
@@ -11,6 +12,7 @@ type Word = {
 
 const API_URL = "http://localhost:4000/api/activities/search"; 
 // iOS 시뮬레이터 = localhost, Android 에뮬레이터 = 10.0.2.2 로 바꾸세요.
+// iphone Jisoo: 192.75.244.32
 
 function normalizeWord(raw: any): Word | null {
   if (!raw) return null;
@@ -41,6 +43,29 @@ const WordsScreen = () => {
     setIsRecording((prev) => !prev);
   };
 
+  useEffect(() => {
+    (async () => {
+      try {
+        await TrackPlayer.setupPlayer();
+        await TrackPlayer.updateOptions({
+          capabilities: [Capability.Play, Capability.Pause],
+        });
+        console.log("🎧 TrackPlayer ready");
+      } catch (e) {
+        console.error("TrackPlayer setup failed:", e);
+      }
+    })();
+
+    return () => {
+      (async () => {
+        try {
+          await TrackPlayer.destroy();
+          console.log("🧹 TrackPlayer destroyed");
+        } catch {}
+      })();
+    };
+  }, []);
+
   const fetchWord = async () => {
     setLoading(true);
     try {
@@ -67,8 +92,23 @@ const WordsScreen = () => {
   );
 
   const playAudio = async () => {
-    // react-native-sound 등으로 연결 예정
-    console.log("play", word?.AudioUrl);
+    if (!word?.AudioUrl) {
+      console.warn("⚠️ No AudioUrl found for this word");
+      return;
+    }
+
+    try {
+      console.log("🎵 Playing:", word.AudioUrl);
+      await TrackPlayer.reset(); // 이전 재생 초기화
+      await TrackPlayer.add({
+        id: "word-audio",
+        url: word.AudioUrl, // Flask에서 받은 mp3 파일 URL
+        title: word.Cree || "Cree Word",
+      });
+      await TrackPlayer.play();
+    } catch (error) {
+      console.error("Audio playback error:", error);
+    }
   };
 
   return (
@@ -180,6 +220,5 @@ roundIcon: {
 },
 
 });
-
 
 export default WordsScreen;
