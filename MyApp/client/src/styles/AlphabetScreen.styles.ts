@@ -67,4 +67,12 @@ export default StyleSheet.create({
   symbol: { fontSize: fonts.symbol, color: colors.text },
   selectedCell: { backgroundColor: colors.highlight },
   selectedSymbolText: { fontWeight: 'bold', color: colors.secondary },
+
+  copyright: {
+  fontSize: 12,
+  color: '#6b7280', // 회색톤
+  marginTop: 20,
+  marginBottom: 30,
+  textAlign: 'center',
+},
 });
