@@ -1,19 +1,22 @@
 // MyApp/client/src/screens/DonationScreen.tsx
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather'; // ✅ heart-outline 아이콘용 (Feather)
- 
+import { View, Text, TouchableOpacity, StyleSheet, Linking, ScrollView, Image } from 'react-native'; // ✅ Image 추가
+// import Icon from 'react-native-vector-icons/Feather'; // ❌ 아이콘 import 제거
+
 const DonationScreen = () => {
-  // 하트 버튼 클릭 시 열릴 도네이션 URL
   const handleDonationPress = () => {
-    Linking.openURL('https://fpcf.ca/take-action/ways-to-give'); // 원하는 도네이션 페이지로 변경 가능
+    Linking.openURL('https://fpcf.ca/take-action/ways-to-give');
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* 상단 하트 아이콘 */}
+      {/* 상단 하트 이미지 */}
       <TouchableOpacity style={styles.heartButton} onPress={handleDonationPress}>
-        <Icon name="heart" size={36} color="#1a2e05" />
+        <Image
+          source={require('../../assets/images/donation.png')}
+          style={{ width: 36, height: 36 }}
+          resizeMode="contain"
+        />
       </TouchableOpacity>
 
       {/* 메인 텍스트 */}
@@ -26,7 +29,11 @@ const DonationScreen = () => {
       {/* 박스 1 */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Icon name="heart" size={24} color="#fff" style={styles.cardIcon} />
+          <Image
+            source={require('../../assets/images/problem.png')}
+            style={styles.cardImage}
+            resizeMode="contain"
+          />
           <Text style={styles.cardTitle}>Why Donations Matter</Text>
         </View>
         <Text style={styles.cardText}>
@@ -98,10 +105,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  cardIcon: {
-    backgroundColor: '#6aa55a',
-    borderRadius: 8,
-    padding: 6,
+  cardImage: {
+    width: 28,
+    height: 28,
     marginRight: 10,
   },
   cardTitle: {

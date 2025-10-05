@@ -6,10 +6,22 @@ import { Text, View } from 'react-native';
 import AlphabetScreen from '../screens/AlphabetScreen';
 import WordsScreen from '../screens/WordsScreen';
 import DonationScreen from '../screens/DonationScreen';
-//import RecordScreen from '../screens/RecordScreen'; // ✅ 새로 추가된 Record 페이지
-import Icon from 'react-native-vector-icons/Feather'; // 아이콘 세트
+import RecordScreen from '../screens/RecordScreen';
 
 const Tab = createBottomTabNavigator();
+
+const TAB_TEXT_STYLE = (focused: boolean, highlight?: boolean) => ({
+  fontSize:10,
+  fontWeight: focused ? '700' : '500',
+  color: highlight
+    ? focused
+      ? '#1a2e05'
+      : '#666'
+    : focused
+    ? '#1e90ff'
+    : '#666',
+  letterSpacing: 0.5,
+});
 
 const BottomTabNav = () => {
   return (
@@ -28,25 +40,14 @@ const BottomTabNav = () => {
           },
         }}
       >
-
         {/* 🅰️ Alphabet */}
         <Tab.Screen
           name="Alphabet"
           component={AlphabetScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center' }}>
-                <Icon name="type" size={20} color={focused ? '#1e90ff' : '#666'} />
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: focused ? '700' : '500',
-                    color: focused ? '#1e90ff' : '#666',
-                    marginTop: 4,
-                  }}
-                >
-                  Alphabet
-                </Text>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={TAB_TEXT_STYLE(focused)}>A</Text>
               </View>
             ),
           }}
@@ -58,18 +59,8 @@ const BottomTabNav = () => {
           component={WordsScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center' }}>
-                <Icon name="book" size={20} color={focused ? '#1e90ff' : '#666'} />
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: focused ? '700' : '500',
-                    color: focused ? '#1e90ff' : '#666',
-                    marginTop: 4,
-                  }}
-                >
-                  Words
-                </Text>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={TAB_TEXT_STYLE(focused)}>W</Text>
               </View>
             ),
           }}
@@ -81,18 +72,8 @@ const BottomTabNav = () => {
           component={RecordScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center' }}>
-                <Icon name="mic" size={20} color={focused ? '#1e90ff' : '#666'} />
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: focused ? '700' : '500',
-                    color: focused ? '#1e90ff' : '#666',
-                    marginTop: 4,
-                  }}
-                >
-                  Record
-                </Text>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={TAB_TEXT_STYLE(focused)}>R</Text>
               </View>
             ),
           }}
@@ -107,23 +88,14 @@ const BottomTabNav = () => {
               <View
                 style={{
                   alignItems: 'center',
+                  justifyContent: 'center',
                   backgroundColor: focused ? '#a7d58e' : 'transparent',
                   paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 16,
+                  paddingVertical: 8,
+                  borderRadius: 18,
                 }}
               >
-                <Icon name="heart" size={20} color={focused ? '#1a2e05' : '#666'} />
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: focused ? '700' : '500',
-                    color: focused ? '#1a2e05' : '#666',
-                    marginTop: 4,
-                  }}
-                >
-                  Donate
-                </Text>
+                <Text style={TAB_TEXT_STYLE(focused, true)}>D</Text>
               </View>
             ),
           }}
