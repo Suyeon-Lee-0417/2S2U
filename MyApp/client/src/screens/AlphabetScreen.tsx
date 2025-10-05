@@ -5,7 +5,7 @@ import styles from '../styles/AlphabetScreen.styles';
 export default function AlphabetScreen() {
   const columns = ['ē','i','o','a','ā','ī','ō','final'];
   const ipa: Record<string,string> = {
-    'ē':'[eː]','i':'[i]','o':'[o]','a':'[a]','ā':'[aː]','ī':'[iː]','ō':'[oː]','final':'',
+    ē:'[eː]', i:'[i]', o:'[o]', a:'[a]', ā:'[aː]', ī:'[iː]', ō:'[oː]', final:'',
   };
 
   const rows = [
@@ -19,7 +19,7 @@ export default function AlphabetScreen() {
     { base: 'y [j]',  symbols: ['ᔦ','ᔨ','ᔪ','ᔭ','ᔮ','ᔩ','ᔫ','ᔾ'] },
     { base: 'c [t͡s]',symbols: ['ᒉ','ᒋ','ᒍ','ᒐ','ᒑ','ᒌ','ᒎ','ᐨ'] },
   ];
-
+  
   const [selected, setSelected] = useState<string | null>(null);
   const [pron, setPron] = useState<string>('');
 
