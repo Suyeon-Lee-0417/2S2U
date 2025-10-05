@@ -84,7 +84,7 @@ const WordsScreen = () => {
         <Text>no data</Text>
       ) : null}
       {/* Floating refresh Button */}
-    <TouchableOpacity style={styles.refreshButton}>
+    <TouchableOpacity style={styles.refreshButton} onPress={fetchWord}>
       <Image
         source={require('../../assets/images/refresh.png')}
         style={styles.refreshIcon}
