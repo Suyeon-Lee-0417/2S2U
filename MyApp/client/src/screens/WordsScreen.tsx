@@ -90,6 +90,10 @@ const WordsScreen = () => {
         style={styles.refreshIcon}
       />
       </TouchableOpacity>
+
+      {/* 🔽 저작권 표시 (Copyright) */}
+<Text style={styles.copyright}>© 2025 Cree. All rights reserved.</Text>
+
     </View>
   );
 };
@@ -103,6 +107,17 @@ const styles = StyleSheet.create({
   soundIcon:{ width:30, height:30, tintColor:"#2E3A1C" },
   refreshButton: { position: 'absolute', bottom: 80,  alignSelf: 'center', backgroundColor: '#A2C98F', borderRadius: 50, padding: 16, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 6, elevation: 5,},
   refreshIcon: { width: 28, height: 28, tintColor: '#fff',}
+,
+copyright: {
+  position: 'absolute',       // ✅ 항상 하단 고정
+  bottom: 20,                 // 하단 여백
+  width: '100%',
+  textAlign: 'center',
+  fontSize: 12,
+  color: '#6b7280',           // 회색톤
+},
+
 });
+
 
 export default WordsScreen;

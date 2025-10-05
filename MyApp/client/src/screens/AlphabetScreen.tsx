@@ -179,6 +179,8 @@ export default function AlphabetScreen() {
             </View>
           </View>
         ))}
+        <Text style={styles.copyright}>© 2025 Cree. All rights reserved.</Text>
+
       </ScrollView>
     </View>
   );

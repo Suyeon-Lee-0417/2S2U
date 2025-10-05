@@ -4,7 +4,7 @@ References :
 
 https://thecanadianencyclopedia.ca/en/article/aboriginal-people-languages
 https://www.statcan.gc.ca/o1/en/plus/3920-canadas-indigenous-population
-
+https://fpcf.ca/take-action/ways-to-give
 */
 
 
@@ -89,6 +89,9 @@ const DonationScreen = () => {
   </View>
 
 </TouchableOpacity>
+
+{/* 🔽 저작권 표시 (Copyright) */}
+<Text style={styles.copyright}>© 2025 Cree. All rights reserved.</Text>
 
     </ScrollView>
   );
@@ -223,6 +226,14 @@ const styles = StyleSheet.create({
     color: '#374151',
     lineHeight: 18,
   },
+  copyright: {
+  fontSize: 12,
+  color: '#6b7280', // 회색톤
+  marginTop: 20,
+  marginBottom: 30,
+  textAlign: 'center',
+},
+
 });
 
 export default DonationScreen;
