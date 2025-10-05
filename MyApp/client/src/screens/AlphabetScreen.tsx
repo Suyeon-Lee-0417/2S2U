@@ -1,24 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import TrackPlayer, { Capability } from 'react-native-track-player';
 import styles from '../styles/AlphabetScreen.styles';
 
 export async function setupPlayer() {
-  await TrackPlayer.setupPlayer();
-  TrackPlayer.updateOptions({
-    capabilities: [Capability.Play, Capability.Pause],
-  });
+  try {
+    await TrackPlayer.setupPlayer();
+    await TrackPlayer.updateOptions({
+      capabilities: [Capability.Play, Capability.Pause],
+    });
+    console.log('✅ TrackPlayer setup complete');
+  } catch (err) {
+    console.error('TrackPlayer setup error:', err);
+  }
 }
 
 export async function playSound(file: any) {
-  await TrackPlayer.reset();
-  await TrackPlayer.add({
-    id: 'sound',
-    url: file, // 예: require('../../assets/sounds/a.mp3')
-    title: 'Cree Sound',
-  });
-  await TrackPlayer.play();
+  try {
+    await TrackPlayer.reset();
+    await TrackPlayer.add({
+      id: 'sound',
+      url: file,
+      title: 'Cree Sound',
+    });
+    await TrackPlayer.play();
+  } catch (error) {
+    console.log('🎵 Sound playback failed:', error);
+  }
 }
+
 
 export default function AlphabetScreen() {
   const columns = ['ē','i','o','a','ā','ī','ō','final'];
@@ -76,11 +86,28 @@ export default function AlphabetScreen() {
     'ᐓ': '[wu]',
     'ᐕ': '[wuu]',
   };
+  // ✅ Player setup + cleanup
+  useEffect(() => {
+    (async () => {
+      await setupPlayer();
+    })();
 
+    return () => {
+      (async () => {
+        try {
+          await TrackPlayer.destroy();
+          console.log('🧹 TrackPlayer destroyed');
+        } catch (err) {
+          console.warn('TrackPlayer already destroyed or not initialized');
+        }
+      })();
+    };
+  }, []);
 
   const onPick = async (sym: string) => {
     setSelected(sym);
     setPron(pronunciationMap[sym] ?? '');
+
     const soundFile = soundMap[sym];
     if (soundFile) {
       await playSound(soundFile);
