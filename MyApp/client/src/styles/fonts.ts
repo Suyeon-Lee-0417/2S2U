@@ -1,7 +1,7 @@
 export default {
-    titleLarge: 60,
-    title: 22,
-    body: 16,
-    symbol: 28,
-  };
-  
+  body: 16,
+  title: 20,
+  titleLarge: 64,
+  symbol: 28,
+  caption: 12,
+};
