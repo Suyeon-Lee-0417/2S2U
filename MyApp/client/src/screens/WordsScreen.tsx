@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from "react-native";
+import { Alert, View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import TrackPlayer, { Capability } from "react-native-track-player";
 
@@ -36,11 +36,41 @@ function normalizeWord(raw: any): Word | null {
 const WordsScreen = () => {
   const [word, setWord] = useState<Word | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setRecording] = useState(false);
+  const [filePath, setFilePath] = useState<string | null>(null);
 
-  const toggleRecording = () => {
-    // TODO: 실제 녹음 로직 연결 (권한 요청/시작/중지)
-    setIsRecording((prev) => !prev);
+    const audioRecorderPlayer = new AudioRecorderPlayer();
+
+  const toggleRecording = async () => {
+    if (isRecording) {
+      await stopRecording();
+    } else {
+      await startRecording();
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const result = await audioRecorderPlayer.startRecorder();
+      setRecording(true);
+      console.log('Recording started:', result);
+      setFilePath(null); // clear previous file
+    } catch (err) {
+      console.error('Start recording error:', err);
+      Alert.alert('Error', 'Failed to start recording');
+    }
+  };
+  
+  const stopRecording = async () => {
+    try {
+      const result = await audioRecorderPlayer.stopRecorder();
+      setRecording(false);
+      console.log('Recording stopped:', result);
+      setFilePath(result); // store file path
+    } catch (err) {
+      console.error('Stop recording error:', err);
+      Alert.alert('Error', 'Failed to stop recording');
+    }
   };
 
   useEffect(() => {
@@ -134,21 +164,21 @@ const WordsScreen = () => {
 <View style={styles.actionRow}>
   {/* 🎤 Record / ⏸ Pause 토글 버튼 (왼쪽) */}
   <TouchableOpacity
-    style={styles.roundButton}
-    onPress={toggleRecording}
-    activeOpacity={0.9}
-    accessibilityRole="button"
-    accessibilityLabel={isRecording ? "Pause recording" : "Start recording"}
-  >
-    <Image
-      source={
-        isRecording
-          ? require("../../assets/images/pause.png")
-          : require("../../assets/images/microphone.png")
-      }
-      style={styles.roundIcon}
-    />
-  </TouchableOpacity>
+  style={styles.roundButton}
+  onPress={toggleRecording}
+  activeOpacity={0.9}
+  accessibilityRole="button"
+  accessibilityLabel={isRecording ? "Pause recording" : "Start recording"}
+>
+  <Image
+    source={
+      isRecording
+        ? require("../../assets/images/pause.png")
+        : require("../../assets/images/microphone.png")
+    }
+    style={styles.roundIcon}
+  />
+</TouchableOpacity>
 
   {/* 🔄 Refresh 버튼 (오른쪽) */}
   <TouchableOpacity
