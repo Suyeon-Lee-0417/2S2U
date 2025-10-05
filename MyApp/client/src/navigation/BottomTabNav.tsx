@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import AlphabetScreen from '../screens/AlphabetScreen';
 import WordsScreen from '../screens/WordsScreen';
-import { Text, View } from 'react-native';
+import { Image } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,32 +18,44 @@ const BottomTabNav = () => {
           tabBarStyle: {
             backgroundColor: '#fff',
             borderTopColor: '#eee',
-            height: 60,
+            height: 70,
           },
         }}
       >
-        {/* Alphabet pg*/}
+        {/* 🅰️ Alphabet Page */}
         <Tab.Screen
           name="Alphabet"
           component={AlphabetScreen}
           options={{
-            tabBarIcon: () => (
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 10, color: '#2E3A1C' }}>Alphabet</Text>
-              </View>
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={require('../../assets/images/button_alphabets.png')}
+                style={{
+                  width: 120,
+                  height: 45,
+                  resizeMode: 'contain',
+                  opacity: focused ? 1 : 0.6, // 비활성일 때 살짝 흐리게
+                }}
+              />
             ),
           }}
         />
 
-        {/* Words Pg */}
+        {/* 📖 Words Page */}
         <Tab.Screen
           name="Words"
           component={WordsScreen}
           options={{
-            tabBarIcon: () => (
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 10, color: '#2E3A1C' }}>Words</Text>
-              </View>
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={require('../../assets/images/button_words.png')}
+                style={{
+                  width: 120,
+                  height: 45,
+                  resizeMode: 'contain',
+                  opacity: focused ? 1 : 0.6,
+                }}
+              />
             ),
           }}
         />
