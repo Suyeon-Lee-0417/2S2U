@@ -22,6 +22,65 @@ CONN_STR = (
 def get_conn():
     return pyodbc.connect(CONN_STR)
 
+@app.route("/api/pronounce/assess", methods=["POST"])
+def assess_json():
+    try:
+        file = request.files.get("audio")
+        ref_text = (request.form.get("text") or "").strip()  # ??
+        if not file or not ref_text:
+            return jsonify({"error": "audio and text are required"}), 400
+
+        import os, tempfile, subprocess
+        import azure.cognitiveservices.speech as speechsdk
+
+        with tempfile.TemporaryDirectory() as td:
+            src = os.path.join(td, file.filename or "in.m4a")
+            file.save(src)
+            # 수호 TODO audio convert
+
+        key = os.environ.get("AZURE_SPEECH_KEY")
+        region = os.environ.get("AZURE_SPEECH_REGION")
+        lang = os.environ.get("AZURE_SPEECH_LANG", "en-US")
+        if not key or not region:
+            return jsonify({"error": "server not configured (AZURE_SPEECH_KEY/REGION)"}), 500
+
+        speech_config = speechsdk.SpeechConfig(subscription=key, region=region)
+        speech_config.speech_recognition_language = lang
+        audio_config = speechsdk.audio.AudioConfig()  # 수호 todo
+
+        body = request.get_json(force=True) or {}
+        # ✅ 필수값 검사 (예: text)
+        required = ["text"]
+        missing = [k for k in required if k not in body]
+        if missing:
+            return jsonify({"error": f"missing fields: {missing}"}), 400
+
+        pa_cfg = speechsdk.PronunciationAssessmentConfig(
+            reference_text=ref_text,
+            grading_system=speechsdk.PronunciationAssessmentGradingSystem.HundredMark,
+            granularity=speechsdk.PronunciationAssessmentGranularity.Phoneme,
+            enable_miscue=True,
+        )
+
+        result = recognizer.recognize_once()
+        if result.reason != speechsdk.ResultReason.RecognizedSpeech:
+            return jsonify({"error": "no_speech_or_failed", "reason": str(result.reason)}), 400
+
+        pa = speechsdk.PronunciationAssessmentResult(result)
+
+        return jsonify({
+            "text": result.text,
+            "scores": {
+                "accuracy": pa.accuracy_score,
+                "fluency": pa.fluency_score,
+                "completeness": pa.completeness_score,
+            }
+        }), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+        
 
 @app.route("/api/activities/search", methods=["POST"])
 def search_activities():
