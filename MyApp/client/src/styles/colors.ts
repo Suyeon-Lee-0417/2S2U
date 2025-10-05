@@ -7,6 +7,6 @@ export default {
   muted: '#888888ff',
   baseCell: '#F2F2F2',
   headerBackground: '#E6E6E6',
-  highlight: '#ffec71ff',
+  highlight: '#a7d58e',
   card: '#FFFFFF', 
 };
