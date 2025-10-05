@@ -34,6 +34,12 @@ function normalizeWord(raw: any): Word | null {
 const WordsScreen = () => {
   const [word, setWord] = useState<Word | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+
+  const toggleRecording = () => {
+    // TODO: 실제 녹음 로직 연결 (권한 요청/시작/중지)
+    setIsRecording((prev) => !prev);
+  };
 
   const fetchWord = async () => {
     setLoading(true);
@@ -84,12 +90,40 @@ const WordsScreen = () => {
         <Text>no data</Text>
       ) : null}
       {/* Floating refresh Button */}
-    <TouchableOpacity style={styles.refreshButton} onPress={fetchWord}>
-      <Image
-        source={require('../../assets/images/refresh.png')}
-        style={styles.refreshIcon}
-      />
-      </TouchableOpacity>
+{/* Action Row: 왼쪽(레코딩), 오른쪽(리프레시) */}
+<View style={styles.actionRow}>
+  {/* 🎤 Record / ⏸ Pause 토글 버튼 (왼쪽) */}
+  <TouchableOpacity
+    style={styles.roundButton}
+    onPress={toggleRecording}
+    activeOpacity={0.9}
+    accessibilityRole="button"
+    accessibilityLabel={isRecording ? "Pause recording" : "Start recording"}
+  >
+    <Image
+      source={
+        isRecording
+          ? require("../../assets/images/pause.png")
+          : require("../../assets/images/microphone.png")
+      }
+      style={styles.roundIcon}
+    />
+  </TouchableOpacity>
+
+  {/* 🔄 Refresh 버튼 (오른쪽) */}
+  <TouchableOpacity
+    style={styles.roundButton}
+    onPress={fetchWord}
+    activeOpacity={0.9}
+    accessibilityRole="button"
+    accessibilityLabel="Refresh word"
+  >
+    <Image
+      source={require("../../assets/images/refresh.png")}
+      style={[styles.roundIcon, { tintColor: "#fff" }]}
+    />
+  </TouchableOpacity>
+</View>
 
       {/* 🔽 저작권 표시 (Copyright) */}
 <Text style={styles.copyright}>© 2025 Cree. All rights reserved.</Text>
@@ -115,6 +149,34 @@ copyright: {
   textAlign: 'center',
   fontSize: 12,
   color: '#6b7280',           // 회색톤
+},
+actionRow: {
+  position: 'absolute',
+  bottom: 92,                 // 탭바 위에 뜨도록 (필요하면 조정)
+  width: '86%',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignSelf: 'center',
+},
+
+roundButton: {
+  backgroundColor: '#A2C98F',
+  width: 64,
+  height: 64,
+  borderRadius: 32,
+  alignItems: 'center',
+  justifyContent: 'center',
+  shadowColor: '#000',
+  shadowOpacity: 0.25,
+  shadowRadius: 8,
+  shadowOffset: { width: 0, height: 4 },
+  elevation: 6,
+},
+
+roundIcon: {
+  width: 28,
+  height: 28,
+  tintColor: '#1A2E05', // pause/mic는 녹색 라벨 유지, refresh는 위에서 흰색으로 오버라이드
 },
 
 });
