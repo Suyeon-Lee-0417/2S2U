@@ -1,74 +1,93 @@
-// @ts-ignore
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import styles from '../styles/AlphabetScreen.styles';
 
 export default function AlphabetScreen() {
-  const columns = ['ē', 'i', 'o', 'a', 'ā', 'ī', 'ō', 'final'];
-
-  const rows = [
-    { base: 'w [w]', symbols: ['ᐍ', 'ᐃ', 'ᐅ', 'ᐊ', 'ᐋ', 'ᐄ', 'ᐆ', 'ᐤ'] },
-    { base: 'p [p]', symbols: ['ᐯ', 'ᐱ', 'ᐳ', 'ᐸ', 'ᐹ', 'ᐲ', 'ᐴ', 'ᑊ'] },
-    { base: 't [t]', symbols: ['ᑌ', 'ᑎ', 'ᑐ', 'ᑕ', 'ᑖ', 'ᑏ', 'ᑑ', 'ᐟ'] },
-  ];
-
-  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
-  const [pronunciation, setPronunciation] = useState<string>('');
-
-  const pronunciationMap: Record<string, string> = {
-    'ᐍ': 'weh',
-    'ᐃ': 'ee',
-    'ᐅ': 'oh',
-    'ᐊ': 'ah',
+  const columns = ['ē','i','o','a','ā','ī','ō','final'];
+  const ipa: Record<string,string> = {
+    'ē':'[eː]','i':'[i]','o':'[o]','a':'[a]','ā':'[aː]','ī':'[iː]','ō':'[oː]','final':'',
   };
 
-  const handlePress = (symbol: string) => {
-    setSelectedSymbol(symbol);
-    setPronunciation(pronunciationMap[symbol] || '');
+  const rows = [
+    { base: 'w [w]',  symbols: ['ᐍ','ᐃ','ᐅ','ᐊ','ᐋ','ᐄ','ᐆ','ᐤ'] },
+    { base: 'p [p]',  symbols: ['ᐯ','ᐱ','ᐳ','ᐸ','ᐹ','ᐲ','ᐴ','ᑊ'] },
+    { base: 't [t]',  symbols: ['ᑌ','ᑎ','ᑐ','ᑕ','ᑖ','ᑏ','ᑑ','ᐟ'] },
+    { base: 'k [k]',  symbols: ['ᑫ','ᑭ','ᑯ','ᑲ','ᑳ','ᑮ','ᑰ','ᐠ'] },
+    { base: 'm [m]',  symbols: ['ᒣ','ᒥ','ᒧ','ᒪ','ᒫ','ᒦ','ᒨ','ᒼ'] },
+    { base: 'n [n]',  symbols: ['ᓀ','ᓂ','ᓄ','ᓇ','ᓈ','ᓃ','ᓅ','ᐣ'] },
+    { base: 's [s]',  symbols: ['ᓭ','ᓯ','ᓱ','ᓴ','ᓵ','ᓲ','ᓲ̇','ᐢ'] },
+    { base: 'y [j]',  symbols: ['ᔦ','ᔨ','ᔪ','ᔭ','ᔮ','ᔩ','ᔫ','ᔾ'] },
+    { base: 'c [t͡s]',symbols: ['ᒉ','ᒋ','ᒍ','ᒐ','ᒑ','ᒌ','ᒎ','ᐨ'] },
+  ];
+
+  const [selected, setSelected] = useState<string | null>(null);
+  const [pron, setPron] = useState<string>('');
+
+  const say: Record<string,string> = {
+    // 필요하면 여기에 발음 매핑을 채워 넣으세요.
+  };
+
+  const onPick = (sym: string) => {
+    setSelected(sym);
+    setPron(say[sym] ?? '');
   };
 
   return (
     <View style={styles.page}>
+      {/* 상단 선택 영역 */}
       <View style={styles.header}>
-        {selectedSymbol ? (
+        {selected ? (
           <>
-            <Text style={styles.selectedSymbol}>{selectedSymbol}</Text>
-            <Text style={styles.pronunciationText}>{pronunciation}</Text>
+            <Text style={styles.selectedSymbol}>{selected}</Text>
+            <Text style={styles.pronunciationText}>{pron}</Text>
           </>
         ) : (
           <Text style={styles.placeholder}>Tap a syllabic to see pronunciation</Text>
         )}
       </View>
 
-      <ScrollView horizontal>
-        <View>
-          {/* Header Row */}
-          <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.cell, styles.headerText]}>Base</Text>
-            {columns.map((col) => (
-              <Text key={col} style={[styles.cell, styles.headerText]}>
-                {col}
-              </Text>
+      {/* 표 */}
+      <ScrollView>
+        {/* 헤더 행 */}
+        <View style={[styles.row, styles.headerRow]}>
+          <View style={[styles.baseCell, { height: 60 }]}>
+            <Text style={styles.baseHeaderText}>Base</Text>
+          </View>
+          <View style={styles.cellsRow}>
+            {columns.map((c, i) => (
+              <View
+                key={c}
+                style={[styles.cell, i === columns.length - 1 && styles.lastCell]}
+              >
+                <Text style={styles.headerTop}>{c}</Text>
+                {!!ipa[c] && <Text style={styles.headerBottom}>{ipa[c]}</Text>}
+              </View>
             ))}
           </View>
+        </View>
 
-          {/* Symbol Rows */}
-          {rows.map((row, i) => (
-            <View key={i} style={styles.row}>
-              <Text style={[styles.cell, styles.baseCell]}>{row.base}</Text>
-              {row.symbols.map((sym, j) => (
+        {/* 데이터 행들 */}
+        {rows.map((r) => (
+          <View key={r.base} style={styles.row}>
+            <View style={[styles.baseCell, { height: 60 }]}>
+              <Text numberOfLines={1}>{r.base}</Text>
+            </View>
+
+            <View style={styles.cellsRow}>
+              {r.symbols.map((sym, i) => (
                 <TouchableOpacity
-                  key={j}
+                  key={`${r.base}-${i}`}
+                  onPress={() => onPick(sym)}
                   style={[
                     styles.cell,
-                    selectedSymbol === sym && styles.selectedCell,
+                    i === columns.length - 1 && styles.lastCell,
+                    selected === sym && styles.selectedCell,
                   ]}
-                  onPress={() => handlePress(sym)}
                 >
                   <Text
                     style={[
                       styles.symbol,
-                      selectedSymbol === sym && styles.selectedSymbolText,
+                      selected === sym && styles.selectedSymbolText,
                     ]}
                   >
                     {sym}
@@ -76,8 +95,8 @@ export default function AlphabetScreen() {
                 </TouchableOpacity>
               ))}
             </View>
-          ))}
-        </View>
+          </View>
+        ))}
       </ScrollView>
     </View>
   );

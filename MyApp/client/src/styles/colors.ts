@@ -1,12 +1,12 @@
 export default {
-    primary: '#4A90E2',
-    secondary: '#2A67D0',
-    background: '#FFFFFF',
-    baseCell: '#F8F8F8',
-    headerBackground: '#F0F0F0',
-    border: '#DDDDDD',
-    text: '#222222',
-    muted: '#999999',
-    highlight: '#E8F2FF',
-  };
-  
+  background: '#FFFFFF',
+  text: '#000000',
+  primary: '#0066CC',
+  secondary: '#FF9900',
+  border: '#CCCCCC',
+  muted: '#888888',
+  baseCell: '#F2F2F2',
+  headerBackground: '#E6E6E6',
+  highlight: '#FFF5CC',
+  card: '#FFFFFF', 
+};
