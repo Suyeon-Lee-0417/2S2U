@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Alert, View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import TrackPlayer, { Capability } from "react-native-track-player";
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
 
 type Word = {
   Cree: string;
@@ -39,7 +40,7 @@ const WordsScreen = () => {
   const [isRecording, setRecording] = useState(false);
   const [filePath, setFilePath] = useState<string | null>(null);
 
-    const audioRecorderPlayer = new AudioRecorderPlayer();
+    const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
 
   const toggleRecording = async () => {
     if (isRecording) {

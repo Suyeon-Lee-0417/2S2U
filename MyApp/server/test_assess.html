@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pronunciation Assessment Tester</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 32px; background: #fafafa; }
+    .row { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; }
+    input[type="text"] { width: 420px; padding: 8px; }
+    button { padding: 10px 16px; border: 0; border-radius: 6px; background: #0078d4; color: #fff; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    pre { background: #111; color: #0f0; padding: 12px; border-radius: 6px; overflow-x: auto; max-width: 780px; }
+  </style>
+</head>
+<body>
+  <h1>🎤 Pronunciation Assessment — Test Client</h1>
+  <p>오디오 파일과 참조 텍스트(<em>reference text</em>)를 서버로 전송해서 점수 응답을 확인합니다.</p>
+
+  <div class="row">
+    <label for="audio">Audio file (m4a/wav/aac 등)</label>
+    <input id="audio" type="file" accept="audio/*" />
+  </div>
+
+  <div class="row">
+    <label for="text">Reference text (예: see-pee)</label>
+    <input id="text" type="text" placeholder="입력한 문장/단어 (채점 기준)" />
+  </div>
+
+  <div class="row">
+    <button id="btn">Assess</button>
+  </div>
+
+  <h3>Response</h3>
+  <pre id="out">결과가 여기에 표시됩니다…</pre>
+
+  <script>
+    // 서버 주소가 다르면 여기 수정
+    const API_URL = "http://127.0.0.1:4000/api/pronounce/assess";
+
+    const $file = document.getElementById("audio");
+    const $text = document.getElementById("text");
+    const $btn  = document.getElementById("btn");
+    const $out  = document.getElementById("out");
+
+    function log(obj) {
+      $out.textContent = (typeof obj === "string")
+        ? obj
+        : JSON.stringify(obj, null, 2);
+    }
+
+    $btn.addEventListener("click", async () => {
+      const f = $file.files[0];
+      const t = ($text.value || "").trim();
+
+      if (!f || !t) {
+        log("❌ audio와 text가 모두 필요합니다.");
+        return;
+      }
+
+      const form = new FormData();
+      form.append("audio", f, f.name);
+      form.append("text", t);
+
+      $btn.disabled = true;
+      log("⏳ Uploading and assessing…");
+
+      try {
+        const res = await fetch(API_URL, { method: "POST", body: form });
+        const isJson = (res.headers.get("content-type") || "").includes("application/json");
+        if (!isJson) {
+          const txt = await res.text();
+          log(`❌ Unexpected response:\n${txt}`);
+          return;
+        }
+        const data = await res.json();
+        log(data);
+      } catch (err) {
+        log("❌ " + err);
+      } finally {
+        $btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
