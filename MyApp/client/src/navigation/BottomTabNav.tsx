@@ -9,12 +9,20 @@ import DonationScreen from '../screens/DonationScreen';
 
 const Tab = createBottomTabNavigator();
 
-// ✅ 공통 아이콘 뷰 (선택되면 초록 배경)
-const TabIcon = ({ source, focused }: {source: ImageSourcePropType; focused: boolean}) => (
+// 1) TabIcon now receives `color` and applies it as tintColor
+const TabIcon = ({
+  source,
+  focused,
+  color,
+}: {
+  source: ImageSourcePropType;
+  focused: boolean;
+  color: string; // keep required
+}) => (
   <View style={[styles.iconContainer, focused && styles.focusedBackground]}>
     <Image
       source={source}
-      style={[styles.icon, { opacity: focused ? 1 : 0.6 }]}
+      style={[styles.icon, { tintColor: color, opacity: focused ? 1 : 0.7 }]}
       resizeMode="contain"
     />
   </View>
@@ -35,8 +43,13 @@ const BottomTabNav = () => {
             justifyContent: 'space-around',
             alignItems: 'center',
           },
-          // ✅ 라우트별 아이콘 매핑 + 공통 TabIcon 사용
-          tabBarIcon: ({ focused }) => {
+
+          // 2) Provide colors so `tabBarIcon` receives `color`
+          tabBarActiveTintColor: '#000',     // black when focused
+          tabBarInactiveTintColor: '#000',   // black when unfocused (change to '#8B8B8B' if you want gray)
+
+          // 3) Pass `color` down to TabIcon
+          tabBarIcon: ({ focused, color }) => {
             let src: ImageSourcePropType;
             switch (route.name) {
               case 'Alphabet':
@@ -49,7 +62,7 @@ const BottomTabNav = () => {
               default:
                 src = require('../../assets/images/navDonation.png');
             }
-            return <TabIcon source={src} focused={focused} />;
+            return <TabIcon source={src} focused={focused} color={color} />;
           },
         })}
       >
