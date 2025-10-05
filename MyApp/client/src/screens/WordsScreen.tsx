@@ -67,10 +67,32 @@ const WordsScreen = () => {
       setRecording(false);
       console.log('Recording stopped:', result);
       setFilePath(result); // store file path
+      await uploadRecording(word?.Cree || ""); 
     } catch (err) {
       console.error('Stop recording error:', err);
       Alert.alert('Error', 'Failed to stop recording');
     }
+  };
+
+  const uploadRecording = async (refText: string) => {
+    if (!filePath) return Alert.alert("No recording", "Please record first");
+  
+    const formData = new FormData();
+    formData.append("audio", {
+      uri: filePath,
+      name: "recording.m4a",
+      type: "audio/m4a",
+    });
+    formData.append("text", refText);
+  
+    const res = await fetch("http://YOUR_SERVER/api/pronounce/assess", {
+      method: "POST",
+      body: formData,
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  
+    const data = await res.json();
+    console.log("Pronunciation Assessment:", data);
   };
 
   useEffect(() => {

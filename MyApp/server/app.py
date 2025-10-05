@@ -72,6 +72,8 @@ def assess_json():
             enable_miscue=True,
         )
 
+        pa_cfg.apply_to(recognizer)
+
         result = recognizer.recognize_once()
         if result.reason != speechsdk.ResultReason.RecognizedSpeech:
             return jsonify({"error": "no_speech_or_failed", "reason": str(result.reason)}), 400
